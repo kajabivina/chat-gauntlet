@@ -138,6 +138,7 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
       });
 
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Chat error");
       lastMessageTime.current[chatId] = Date.now();
 
       // Mark unread if not the active mobile tab

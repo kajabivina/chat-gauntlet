@@ -10,6 +10,12 @@ interface ChatWindowPanelProps {
   onFocus: (chatId: string) => void;
 }
 
+const MACROS = [
+  { label: "Opening", text: "Hi! Thanks for reaching out. I'm here to help — can you walk me through what's happening?" },
+  { label: "Idle", text: "Thanks for your patience! I'm still looking into this for you." },
+  { label: "Closed", text: "I'm glad we got that sorted! Is there anything else I can help you with today?" },
+];
+
 const PERSONA_EMOJI: Record<string, string> = {
   frustrated_tech: "😤",
   confused_elderly: "😕",
@@ -139,7 +145,20 @@ export default function ChatWindowPanel({
 
       {/* Input */}
       {!chat.resolved && (
-        <div className="border-t border-arcade-border p-2.5 flex gap-2 items-end bg-arcade-dark/30">
+        <div className="border-t border-arcade-border bg-arcade-dark/30">
+          <div className="flex gap-1.5 px-2.5 pt-2">
+            {MACROS.map((m) => (
+              <button
+                key={m.label}
+                onClick={() => setInput(m.text)}
+                disabled={chat.isWaiting}
+                className="font-body text-[10px] px-2 py-1 rounded border border-arcade-border text-arcade-dim hover:text-arcade-pink hover:border-arcade-pink/50 transition-colors disabled:opacity-30"
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+          <div className="p-2.5 flex gap-2 items-end">
           <textarea
             ref={inputRef}
             value={input}
@@ -157,6 +176,7 @@ export default function ChatWindowPanel({
           >
             SEND
           </button>
+          </div>
         </div>
       )}
 
