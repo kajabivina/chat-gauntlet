@@ -73,6 +73,15 @@ export function generateChats(count: number): ChatWindow[] {
   });
 }
 
+export function calculatePoints(agentMessageCount: number): number {
+  if (agentMessageCount <= 2) return 10;
+  if (agentMessageCount <= 4) return 8;
+  if (agentMessageCount <= 6) return 6;
+  if (agentMessageCount <= 8) return 4;
+  if (agentMessageCount <= 10) return 2;
+  return 1;
+}
+
 export function calculateRating(
   resolved: number,
   total: number,

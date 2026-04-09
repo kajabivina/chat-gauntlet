@@ -11,9 +11,9 @@ interface ChatWindowPanelProps {
 }
 
 const MACROS = [
-  { label: "Opening", text: "Hi! Thanks for reaching out. I'm here to help — can you walk me through what's happening?" },
-  { label: "Idle", text: "Thanks for your patience! I'm still looking into this for you." },
-  { label: "Closed", text: "I'm glad we got that sorted! Is there anything else I can help you with today?" },
+  { label: "Opening", text: "Hi there, thanks for reaching out! My name is David and I'm here to help.\n\nGive me a quick moment to catch up on the conversation so far." },
+  { label: "Idle", text: "Just following up on my previous message." },
+  { label: "Closed", text: "Glad everything is resolved! I'll close this chat.\n\nIf anything else comes up, you're always welcome to start a new conversation.\n\nHave a great day ahead!" },
 ];
 
 const PERSONA_EMOJI: Record<string, string> = {

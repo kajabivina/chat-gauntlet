@@ -8,7 +8,7 @@ import {
   GameResult,
   ChatMessage,
 } from "@/lib/types";
-import { generateChats, calculateRating, formatTime } from "@/lib/gameUtils";
+import { generateChats, calculateRating, calculatePoints, formatTime } from "@/lib/gameUtils";
 import ChatWindowPanel from "./ChatWindowPanel";
 import MusicPlayer from "./MusicPlayer";
 
@@ -33,7 +33,8 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [activeMobileTab, setActiveMobileTab] = useState(0);
   const [unreadIds, setUnreadIds] = useState<Set<string>>(new Set());
-  const [floaters, setFloaters] = useState<{ id: number }[]>([]);
+  const [floaters, setFloaters] = useState<{ id: number; points: number }[]>([]);
+  const scoreRef = useRef(0);
   const gameEndedRef = useRef(false);
   const chatsRef = useRef<ChatWindow[]>([]);
   const responseTimes = useRef<number[]>([]);
@@ -42,6 +43,7 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
   const activeMobileTabRef = useRef(0);
 
   useEffect(() => { chatsRef.current = chats; }, [chats]);
+  useEffect(() => { scoreRef.current = score; }, [score]);
   useEffect(() => { timeLeftRef.current = timeLeft; }, [timeLeft]);
   useEffect(() => { activeMobileTabRef.current = activeMobileTab; }, [activeMobileTab]);
 
@@ -86,6 +88,8 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
       difficulty,
       resolved,
       total,
+      score: scoreRef.current,
+      maxScore: total * 10,
       durationSeconds: config.durationSeconds - timeLeftRef.current,
       averageResponseTimeMs: avgMs,
       rating,
@@ -162,9 +166,11 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
       );
 
       if (data.resolved) {
-        setScore((s) => s + 1);
+        const agentMessages = apiMessages.filter((m) => m.role === "user").length;
+        const points = calculatePoints(agentMessages);
+        setScore((s) => s + points);
         const floaterId = Date.now();
-        setFloaters((prev) => [...prev, { id: floaterId }]);
+        setFloaters((prev) => [...prev, { id: floaterId, points }]);
         setTimeout(() => setFloaters((prev) => prev.filter((f) => f.id !== floaterId)), 900);
       }
     } catch {
@@ -217,7 +223,7 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
             </div>
             {floaters.map((f) => (
               <span key={f.id} className="score-floater font-arcade text-xs text-arcade-pink">
-                +1
+                +{f.points}
               </span>
             ))}
           </div>

@@ -67,6 +67,8 @@ export interface GameResult {
   difficulty: Difficulty;
   resolved: number;
   total: number;
+  score: number;
+  maxScore: number;
   durationSeconds: number;
   averageResponseTimeMs: number;
   rating: "Rookie" | "Agent" | "Pro" | "Legend";

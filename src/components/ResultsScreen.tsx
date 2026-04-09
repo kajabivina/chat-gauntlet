@@ -33,7 +33,7 @@ export default function ResultsScreen({
   const showConfetti = result.rating === "Legend" || result.rating === "Pro";
 
   const handleShare = () => {
-    const text = `I scored ${result.resolved}/${result.total} on ChatGauntlet — ${result.rating} rating! Can you handle the chaos?`;
+    const text = `I scored ${result.score}/${result.maxScore} on Kajabi Support Gauntlet — ${result.rating} rating! Can you handle the chaos?`;
     if (navigator.share) {
       navigator.share({ text });
     } else {
@@ -72,6 +72,14 @@ export default function ResultsScreen({
             </p>
           </div>
           <div className="divide-y divide-arcade-border">
+            <div className="flex justify-between items-center px-5 py-3.5">
+              <span className="font-body text-sm text-arcade-dim">Score</span>
+              <span className="font-arcade text-sm text-arcade-pink">
+                {result.score}
+                <span className="text-arcade-border">/{result.maxScore}</span>
+              </span>
+            </div>
+
             <div className="flex justify-between items-center px-5 py-3.5">
               <span className="font-body text-sm text-arcade-dim">Chats Resolved</span>
               <span className="font-arcade text-sm text-arcade-text">
