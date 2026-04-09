@@ -8,6 +8,7 @@ interface ChatWindowPanelProps {
   onSendMessage: (chatId: string, message: string) => void;
   isActive: boolean;
   onFocus: (chatId: string) => void;
+  steps: string[];
 }
 
 const MACROS = [
@@ -29,8 +30,10 @@ export default function ChatWindowPanel({
   onSendMessage,
   isActive,
   onFocus,
+  steps,
 }: ChatWindowPanelProps) {
   const [input, setInput] = useState("");
+  const [showGuide, setShowGuide] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -110,7 +113,34 @@ export default function ChatWindowPanel({
             IMPATIENT!
           </span>
         )}
+        {steps.length > 0 && (
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowGuide((v) => !v); }}
+            className={`font-body text-[10px] px-2 py-0.5 rounded-full border transition-colors shrink-0 ${
+              showGuide
+                ? "bg-arcade-pink/20 border-arcade-pink text-arcade-pink"
+                : "border-arcade-border text-arcade-dim hover:border-arcade-pink/50 hover:text-arcade-pink"
+            }`}
+          >
+            {showGuide ? "Hide Guide" : "📋 Guide"}
+          </button>
+        )}
       </div>
+
+      {/* Troubleshooting guide */}
+      {showGuide && steps.length > 0 && (
+        <div className="border-b border-arcade-border bg-arcade-dark/80 px-3 py-2.5">
+          <p className="font-arcade text-[8px] text-arcade-pink mb-2 tracking-widest">TROUBLESHOOTING STEPS</p>
+          <ol className="flex flex-col gap-1">
+            {steps.map((step, i) => (
+              <li key={i} className="flex gap-2 font-body text-[10px] text-arcade-dim leading-relaxed">
+                <span className="text-arcade-pink shrink-0 font-semibold">{i + 1}.</span>
+                <span>{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0 scrollbar-hide">

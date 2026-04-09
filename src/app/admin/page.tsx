@@ -10,7 +10,17 @@ interface PersonaPolicy {
 interface Policy {
   personas: Record<string, PersonaPolicy>;
   rules: string;
+  troubleshootingSteps: Record<string, string[]>;
 }
+
+const PROBLEM_LABELS: Record<string, string> = {
+  course_access: "Course Access Issue",
+  billing: "Billing Question",
+  login: "Can't Log In",
+  product_issue: "Product Builder Issue",
+  email_issue: "Emails Not Sending",
+  cancellation: "Cancel Subscription",
+};
 
 const PERSONA_LABELS: Record<string, string> = {
   frustrated_tech: "Frustrated Tech-Savvy Creator",
@@ -185,6 +195,42 @@ export default function AdminPage() {
                   rows={10}
                   className="w-full bg-arcade-dark border border-arcade-border rounded-lg px-4 py-3 font-body text-arcade-text text-sm focus:outline-none focus:border-arcade-pink resize-y font-mono"
                 />
+              </div>
+            </section>
+
+            <section>
+              <h2 className="font-arcade text-[10px] text-arcade-dim mb-4 uppercase tracking-widest">
+                Troubleshooting Steps
+              </h2>
+              <p className="font-body text-xs text-arcade-dim mb-4">
+                Steps shown to agents during each chat. One step per line. The AI customer also uses these to respond correctly.
+              </p>
+              <div className="flex flex-col gap-4">
+                {Object.entries(PROBLEM_LABELS).map(([key, label]) => (
+                  <div key={key} className="bg-arcade-card border border-arcade-border rounded-xl p-5">
+                    <label className="block font-body text-xs text-arcade-text mb-2 font-semibold">
+                      {label}
+                    </label>
+                    <textarea
+                      value={(policy.troubleshootingSteps?.[key] ?? []).join("\n")}
+                      onChange={(e) =>
+                        setPolicy((p) =>
+                          p
+                            ? {
+                                ...p,
+                                troubleshootingSteps: {
+                                  ...p.troubleshootingSteps,
+                                  [key]: e.target.value.split("\n"),
+                                },
+                              }
+                            : p
+                        )
+                      }
+                      rows={5}
+                      className="w-full bg-arcade-dark border border-arcade-border rounded-lg px-4 py-3 font-body text-arcade-text text-sm focus:outline-none focus:border-arcade-pink resize-y font-mono"
+                    />
+                  </div>
+                ))}
               </div>
             </section>
 

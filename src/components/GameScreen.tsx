@@ -30,6 +30,11 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
   const [chats, setChats] = useState<ChatWindow[]>(() => generateChats(config.chatCount));
   const [timeLeft, setTimeLeft] = useState(config.durationSeconds);
   const [score, setScore] = useState(0);
+  const [stepsMap, setStepsMap] = useState<Record<string, string[]>>({});
+
+  useEffect(() => {
+    fetch("/api/steps").then((r) => r.json()).then(setStepsMap).catch(() => {});
+  }, []);
   const [activeChat, setActiveChat] = useState<string | null>(null);
   const [activeMobileTab, setActiveMobileTab] = useState(0);
   const [unreadIds, setUnreadIds] = useState<Set<string>>(new Set());
@@ -272,6 +277,7 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
             onSendMessage={sendMessage}
             isActive={true}
             onFocus={() => {}}
+            steps={stepsMap[chats[activeMobileTab].problem] ?? []}
           />
         )}
       </div>
@@ -288,6 +294,7 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
             onSendMessage={sendMessage}
             isActive={activeChat === chat.id}
             onFocus={setActiveChat}
+            steps={stepsMap[chat.problem] ?? []}
           />
         ))}
       </div>

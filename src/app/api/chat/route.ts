@@ -41,10 +41,16 @@ export async function POST(req: NextRequest) {
 - Account ID: ${accountInfo.accountId}`
       : "";
 
+    const steps = policy.troubleshootingSteps?.[problem as string] ?? [];
+    const stepsSection = steps.length > 0
+      ? `\nExpected support steps the agent should follow (respond naturally based on whether they do this correctly):\n${steps.map((s, i) => `${i + 1}. ${s}`).join("\n")}`
+      : "";
+
     const systemPrompt = `You are playing the role of a Kajabi customer contacting support. ${personaData.style}${impatienceNote}
 ${accountSection}
 
 Your situation: ${problemContext}
+${stepsSection}
 
 RULES:
 ${policy.rules}`;
