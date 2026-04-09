@@ -6,12 +6,12 @@ export type Persona =
   | "angry_billing";
 
 export type Problem =
+  | "course_access"
+  | "billing"
   | "login"
-  | "wrong_item"
-  | "billing_error"
-  | "not_working"
-  | "refund"
-  | "kajabi";
+  | "product_issue"
+  | "email_issue"
+  | "cancellation";
 
 export type Difficulty = "rookie" | "agent" | "gauntlet";
 

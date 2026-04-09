@@ -16,8 +16,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ChatGauntlet — Customer Support Training Simulator",
-  description: "Can you handle the chaos? Train your support skills against AI customers.",
+  title: "Kajabi Support Gauntlet — Support Training Simulator",
+  description: "Train your Kajabi support skills against AI customers.",
 };
 
 export default function RootLayout({

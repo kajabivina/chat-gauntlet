@@ -10,34 +10,34 @@ const PERSONAS: { value: Persona; label: string }[] = [
 
 const PROBLEMS: { value: Problem; label: string; opening: string }[] = [
   {
+    value: "course_access",
+    label: "Course Access Issue",
+    opening: "hi my students are saying they cant access my course content at all, this is a disaster",
+  },
+  {
+    value: "billing",
+    label: "Billing Question",
+    opening: "i was just charged and i dont understand why, can someone explain this to me",
+  },
+  {
     value: "login",
     label: "Can't Log In",
-    opening: "hi i cant log into my account!! its been like an hour",
+    opening: "hi i cant log into my kajabi account, ive tried resetting my password twice already",
   },
   {
-    value: "wrong_item",
-    label: "Wrong Item Delivered",
-    opening: "hello? i got the completely wrong thing in my order",
+    value: "product_issue",
+    label: "Product Builder Issue",
+    opening: "my product pages arent showing up correctly, some of my content is just gone",
   },
   {
-    value: "billing_error",
-    label: "Billing Error",
-    opening: "i was charged the wrong amount and i want to know why",
+    value: "email_issue",
+    label: "Emails Not Sending",
+    opening: "i sent a broadcast to my list an hour ago and nobody received it, whats going on",
   },
   {
-    value: "not_working",
-    label: "Product Not Working",
-    opening: "the product i bought isnt working at all, very frustrated",
-  },
-  {
-    value: "refund",
-    label: "Refund Request",
-    opening: "i need a refund please, i changed my mind about my purchase",
-  },
-  {
-    value: "kajabi",
-    label: "Kajabi Platform Issue",
-    opening: "hi i need help with my kajabi course, my students cant access the content at all",
+    value: "cancellation",
+    label: "Cancel Subscription",
+    opening: "i want to cancel my kajabi plan and i need help doing that",
   },
 ];
 

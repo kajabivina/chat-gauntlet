@@ -13,10 +13,10 @@ interface Policy {
 }
 
 const PERSONA_LABELS: Record<string, string> = {
-  frustrated_tech: "Frustrated Tech User",
-  confused_elderly: "Confused Elderly Person",
+  frustrated_tech: "Frustrated Tech-Savvy Creator",
+  confused_elderly: "Confused Older Creator",
   impatient_business: "Impatient Business Owner",
-  anxious_buyer: "Anxious First-Time Buyer",
+  anxious_buyer: "Anxious New Kajabi User",
   angry_billing: "Angry Billing Complaint",
 };
 

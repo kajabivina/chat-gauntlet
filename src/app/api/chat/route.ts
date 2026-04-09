@@ -4,12 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { readPolicy } from "@/lib/adminPolicy";
 
 const PROBLEMS: Record<string, string> = {
-  login: "cannot log in to their account",
-  wrong_item: "received the wrong item in their order",
-  billing_error: "was charged incorrectly on their bill",
-  not_working: "has a product that is not working properly",
-  refund: "wants a refund for a recent purchase",
-  kajabi: "is having trouble with their Kajabi course platform — students cannot access their course or membership content",
+  course_access: "is a Kajabi creator whose students cannot access their course or membership content",
+  billing: "has a question or complaint about a charge on their Kajabi account",
+  login: "cannot log in to their Kajabi account",
+  product_issue: "has a Kajabi product or course page that is not displaying or working correctly",
+  email_issue: "sent a Kajabi broadcast or automation email that was not delivered to their list",
+  cancellation: "wants to cancel their Kajabi subscription",
 };
 
 export async function POST(req: NextRequest) {

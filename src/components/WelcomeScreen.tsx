@@ -27,13 +27,13 @@ export default function WelcomeScreen({ sessionsRemaining, onStart }: WelcomeScr
       {/* Title */}
       <div className="text-center mb-10 animate-bounce-in">
         <div className="font-arcade text-[11px] text-arcade-pink tracking-widest mb-6 opacity-70">
-          ── TRAINING SIMULATOR ──
+          ── KAJABI SUPPORT TRAINING ──
         </div>
         <h1 className="font-arcade text-3xl sm:text-5xl text-arcade-pink leading-tight mb-5 text-glow-pink">
           CHAT<br />GAUNTLET
         </h1>
         <p className="font-body text-arcade-dim text-base sm:text-lg tracking-wide">
-          Can you handle the chaos?
+          Handle real Kajabi customer scenarios
         </p>
       </div>
 
@@ -130,7 +130,7 @@ export default function WelcomeScreen({ sessionsRemaining, onStart }: WelcomeScr
 
       {/* Footer */}
       <p className="mt-12 font-body text-xs text-arcade-border text-center">
-        AI customers powered by Claude · Sessions reset every Monday
+        AI Kajabi customers powered by GPT-4o mini · Sessions reset every Monday
       </p>
     </div>
   );
