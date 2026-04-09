@@ -25,19 +25,12 @@ export default function ChatWindowPanel({
   onFocus,
 }: ChatWindowPanelProps) {
   const [input, setInput] = useState("");
-  const [resolving, setResolving] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat.messages, chat.isTyping]);
-
-  useEffect(() => {
-    if (chat.resolved && !resolving) {
-      setResolving(true);
-    }
-  }, [chat.resolved, resolving]);
 
   const handleSend = () => {
     const trimmed = input.trim();
@@ -53,80 +46,76 @@ export default function ChatWindowPanel({
     }
   };
 
+  const isImpatient = !chat.resolved && chat.impatience > 1;
+
   return (
     <div
       onClick={() => onFocus(chat.id)}
-      className={`flex flex-col rounded-2xl border-2 transition-all duration-200 overflow-hidden h-full ${
+      className={`flex flex-col rounded-xl border-2 overflow-hidden h-full transition-all duration-200 ${
         chat.resolved
-          ? "border-green-300 bg-green-50 opacity-75"
+          ? "border-green-500/40 bg-arcade-card opacity-70 animate-resolve-pop"
+          : isImpatient
+          ? "border-red-500 bg-arcade-card animate-border-flash"
           : isActive
-          ? "border-pink-400 bg-white shadow-lg shadow-pink-100"
-          : "border-gray-200 bg-white shadow-sm hover:border-pink-200"
-      } ${resolving ? "animate-resolve" : ""}`}
+          ? "border-arcade-pink bg-arcade-card shadow-pink-glow"
+          : "border-arcade-border bg-arcade-card hover:border-arcade-pink/30"
+      }`}
     >
-      {/* Header */}
+      {/* Pink top accent bar */}
       <div
-        className={`flex items-center gap-2 px-3 py-2 border-b ${
+        className={`h-0.5 w-full transition-colors ${
           chat.resolved
-            ? "bg-green-100 border-green-200"
-            : isActive
-            ? "bg-pink-500 border-pink-500"
-            : "bg-gray-50 border-gray-200"
+            ? "bg-green-500"
+            : isImpatient
+            ? "bg-red-500"
+            : "bg-arcade-pink"
         }`}
-      >
-        <span className="text-lg">
-          {chat.resolved ? "✅" : PERSONA_EMOJI[chat.persona]}
-        </span>
-        <div className="flex-1 min-w-0">
-          <p
-            className={`text-xs font-bold truncate ${
+      />
+
+      {/* Header */}
+      <div className="flex items-center gap-2.5 px-3 py-2.5 border-b border-arcade-border bg-arcade-dark/50">
+        <div className="relative shrink-0">
+          <span className="text-xl">{PERSONA_EMOJI[chat.persona]}</span>
+          <span
+            className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-arcade-card ${
               chat.resolved
-                ? "text-green-700"
-                : isActive
-                ? "text-white"
-                : "text-gray-700"
+                ? "bg-green-500"
+                : chat.isWaiting || chat.isTyping
+                ? "bg-yellow-400"
+                : "bg-green-400"
             }`}
-          >
+          />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-body text-xs font-bold text-arcade-text truncate">
             {chat.personaLabel}
           </p>
-          <p
-            className={`text-xs truncate ${
-              chat.resolved
-                ? "text-green-500"
-                : isActive
-                ? "text-pink-100"
-                : "text-gray-400"
-            }`}
-          >
-            {chat.problemLabel}
-          </p>
+          <p className="font-body text-[10px] text-arcade-dim truncate">{chat.problemLabel}</p>
         </div>
         {chat.resolved && (
-          <span className="text-xs font-bold text-green-600 bg-green-200 px-2 py-0.5 rounded-full">
-            Resolved ✓
+          <span className="font-body text-[10px] font-bold text-green-400 bg-green-500/10 border border-green-500/30 px-2 py-0.5 rounded-full shrink-0">
+            RESOLVED ✓
           </span>
         )}
-        {!chat.resolved && chat.impatience > 1 && (
-          <span className="text-xs font-bold text-red-500 bg-red-100 px-2 py-0.5 rounded-full animate-pulse">
-            Impatient!
+        {isImpatient && (
+          <span className="font-body text-[10px] font-bold text-red-400 bg-red-500/10 border border-red-500/30 px-2 py-0.5 rounded-full shrink-0 animate-timer-pulse">
+            IMPATIENT!
           </span>
         )}
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0">
+      <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-0 scrollbar-hide">
         {chat.messages.map((msg, i) => (
           <div
             key={i}
-            className={`chat-message flex ${
-              msg.role === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={`chat-message flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[85%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+              className={`max-w-[85%] px-3 py-2 rounded-2xl font-body text-sm leading-relaxed ${
                 msg.role === "user"
-                  ? "bg-pink-500 text-white rounded-br-sm"
-                  : "bg-gray-100 text-gray-800 rounded-bl-sm"
+                  ? "bg-arcade-pink text-white rounded-br-sm"
+                  : "bg-[#2A2A2A] text-arcade-text rounded-bl-sm"
               }`}
             >
               {msg.content}
@@ -136,11 +125,11 @@ export default function ChatWindowPanel({
 
         {chat.isTyping && (
           <div className="flex justify-start">
-            <div className="bg-gray-100 px-3 py-2 rounded-2xl rounded-bl-sm">
-              <div className="flex gap-1 items-center h-4">
-                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0ms]" />
-                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:150ms]" />
-                <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:300ms]" />
+            <div className="bg-[#2A2A2A] px-4 py-2.5 rounded-2xl rounded-bl-sm">
+              <div className="flex gap-1.5 items-center h-4">
+                <span className="w-1.5 h-1.5 bg-arcade-dim rounded-full animate-bounce [animation-delay:0ms]" />
+                <span className="w-1.5 h-1.5 bg-arcade-dim rounded-full animate-bounce [animation-delay:150ms]" />
+                <span className="w-1.5 h-1.5 bg-arcade-dim rounded-full animate-bounce [animation-delay:300ms]" />
               </div>
             </div>
           </div>
@@ -150,32 +139,30 @@ export default function ChatWindowPanel({
 
       {/* Input */}
       {!chat.resolved && (
-        <div className="border-t border-gray-100 p-2 flex gap-2 items-end">
+        <div className="border-t border-arcade-border p-2.5 flex gap-2 items-end bg-arcade-dark/30">
           <textarea
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={
-              chat.isWaiting ? "Waiting for customer..." : "Type a reply..."
-            }
+            placeholder={chat.isWaiting ? "Waiting for customer..." : "Type a reply..."}
             disabled={chat.isWaiting}
             rows={2}
-            className="flex-1 resize-none text-sm px-3 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-pink-400 disabled:bg-gray-50 disabled:text-gray-400 transition-colors"
+            className="flex-1 resize-none font-body text-sm px-3 py-2 rounded-lg bg-arcade-card border border-arcade-border text-arcade-text placeholder-arcade-dim/50 focus:outline-none focus:border-arcade-pink disabled:opacity-40 transition-colors"
           />
           <button
             onClick={handleSend}
             disabled={!input.trim() || chat.isWaiting}
-            className="bg-pink-500 hover:bg-pink-600 disabled:bg-gray-200 text-white disabled:text-gray-400 px-3 py-2 rounded-xl transition-colors text-sm font-bold shrink-0"
+            className="bg-arcade-pink hover:brightness-110 disabled:opacity-30 text-white px-4 py-2 rounded-lg transition-all text-sm font-body font-bold shrink-0 active:scale-95"
           >
-            Send
+            SEND
           </button>
         </div>
       )}
 
       {chat.resolved && (
-        <div className="border-t border-green-200 p-3 text-center text-sm font-semibold text-green-600">
-          Chat resolved! Great work ✓
+        <div className="border-t border-green-500/20 p-3 text-center font-body text-xs font-bold text-green-400 bg-green-500/5">
+          ✓ Chat resolved — great work!
         </div>
       )}
     </div>

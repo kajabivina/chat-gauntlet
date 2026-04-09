@@ -10,7 +10,8 @@ export type Problem =
   | "wrong_item"
   | "billing_error"
   | "not_working"
-  | "refund";
+  | "refund"
+  | "kajabi";
 
 export type Difficulty = "rookie" | "agent" | "gauntlet";
 
@@ -25,20 +26,20 @@ export const DIFFICULTY_CONFIGS: Record<Difficulty, DifficultyConfig> = {
   rookie: {
     label: "Rookie",
     chatCount: 2,
-    durationSeconds: 180,
-    description: "2 chats · 3 minutes",
+    durationSeconds: 300,
+    description: "2 chats · 5 minutes",
   },
   agent: {
     label: "Agent",
     chatCount: 2,
-    durationSeconds: 150,
-    description: "2 chats · 2.5 minutes",
+    durationSeconds: 600,
+    description: "2 chats · 10 minutes",
   },
   gauntlet: {
     label: "Gauntlet",
     chatCount: 2,
-    durationSeconds: 120,
-    description: "2 chats · 2 minutes",
+    durationSeconds: 900,
+    description: "2 chats · 15 minutes",
   },
 };
 

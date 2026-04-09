@@ -1,8 +1,8 @@
 "use client";
 
 import { GameResult } from "@/lib/types";
-import { getRatingColor } from "@/lib/gameUtils";
 import { MAX_SESSIONS } from "@/lib/rateLimit";
+import Confetti from "./Confetti";
 
 interface ResultsScreenProps {
   result: GameResult;
@@ -11,11 +11,14 @@ interface ResultsScreenProps {
   onHome: () => void;
 }
 
-const RATING_EMOJI: Record<GameResult["rating"], string> = {
-  Legend: "🏆",
-  Pro: "⭐",
-  Agent: "👍",
-  Rookie: "💪",
+const RATING_CONFIG: Record<
+  GameResult["rating"],
+  { emoji: string; color: string; bg: string; border: string }
+> = {
+  Legend: { emoji: "🏆", color: "text-yellow-400", bg: "bg-yellow-500/10", border: "border-yellow-500/40" },
+  Pro:    { emoji: "⭐", color: "text-arcade-pink", bg: "bg-arcade-pink/10", border: "border-arcade-pink/40" },
+  Agent:  { emoji: "👍", color: "text-purple-400",  bg: "bg-purple-500/10",  border: "border-purple-500/40"  },
+  Rookie: { emoji: "💪", color: "text-blue-400",    bg: "bg-blue-500/10",    border: "border-blue-500/40"    },
 };
 
 export default function ResultsScreen({
@@ -26,10 +29,11 @@ export default function ResultsScreen({
 }: ResultsScreenProps) {
   const pct = Math.round((result.resolved / result.total) * 100);
   const avgSec = Math.round(result.averageResponseTimeMs / 1000);
-  const ratingColor = getRatingColor(result.rating);
+  const cfg = RATING_CONFIG[result.rating];
+  const showConfetti = result.rating === "Legend" || result.rating === "Pro";
 
   const handleShare = () => {
-    const text = `I scored ${result.resolved}/${result.total} on ChatGauntlet (${result.rating} rating)! Train your customer support skills at ChatGauntlet.`;
+    const text = `I scored ${result.resolved}/${result.total} on ChatGauntlet — ${result.rating} rating! Can you handle the chaos?`;
     if (navigator.share) {
       navigator.share({ text });
     } else {
@@ -39,98 +43,118 @@ export default function ResultsScreen({
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md animate-bounce-in">
-        {/* Rating badge */}
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4">{RATING_EMOJI[result.rating]}</div>
-          <div
-            className={`text-5xl font-black mb-2 ${ratingColor}`}
-          >
-            {result.rating}
+    <div className="min-h-screen arcade-grid flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
+      {showConfetti && <Confetti />}
+
+      {/* Ambient glow */}
+      <div className={`absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl pointer-events-none opacity-[0.06] ${
+        result.rating === "Legend" ? "bg-yellow-400" : "bg-arcade-pink"
+      }`} />
+
+      <div className="w-full max-w-md animate-bounce-in relative z-10">
+        {/* Achievement badge */}
+        <div className={`text-center mb-8 border-2 ${cfg.border} ${cfg.bg} rounded-2xl p-8`}>
+          <div className="text-7xl mb-4">{cfg.emoji}</div>
+          <div className="font-arcade text-[10px] text-arcade-dim mb-3 tracking-widest">
+            ACHIEVEMENT UNLOCKED
           </div>
-          <p className="text-gray-500 text-lg">{result.ratingMessage}</p>
+          <div className={`font-arcade text-2xl sm:text-3xl mb-3 ${cfg.color}`}>
+            {result.rating.toUpperCase()}
+          </div>
+          <p className="font-body text-arcade-dim text-sm">{result.ratingMessage}</p>
         </div>
 
-        {/* Stats card */}
-        <div className="bg-gray-50 rounded-2xl p-6 mb-6 space-y-4">
-          <h2 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 text-center">
-            Session Summary
-          </h2>
-
-          <div className="flex justify-between items-center">
-            <span className="text-gray-500 text-sm">Chats Resolved</span>
-            <span className="font-black text-2xl text-gray-800">
-              {result.resolved}
-              <span className="text-gray-300 font-normal text-lg">
-                /{result.total}
+        {/* Scoreboard */}
+        <div className="bg-arcade-card border border-arcade-border rounded-2xl overflow-hidden mb-5">
+          <div className="px-5 py-3 border-b border-arcade-border bg-arcade-dark/50">
+            <p className="font-arcade text-[9px] text-arcade-dim tracking-widest text-center">
+              SCOREBOARD
+            </p>
+          </div>
+          <div className="divide-y divide-arcade-border">
+            <div className="flex justify-between items-center px-5 py-3.5">
+              <span className="font-body text-sm text-arcade-dim">Chats Resolved</span>
+              <span className="font-arcade text-sm text-arcade-text">
+                {result.resolved}
+                <span className="text-arcade-border">/{result.total}</span>
               </span>
-            </span>
-          </div>
+            </div>
 
-          {/* Progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className="bg-pink-500 h-3 rounded-full transition-all duration-700"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
+            {/* Progress bar */}
+            <div className="px-5 py-3">
+              <div className="w-full bg-arcade-border rounded-full h-2">
+                <div
+                  className="bg-arcade-pink h-2 rounded-full transition-all duration-700"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <p className="font-body text-[10px] text-arcade-dim mt-1.5 text-right">{pct}%</p>
+            </div>
 
-          <div className="flex justify-between items-center">
-            <span className="text-gray-500 text-sm">Avg Response Time</span>
-            <span className="font-bold text-gray-800">
-              {avgSec > 0 ? `${avgSec}s` : "—"}
-            </span>
-          </div>
+            <div className="flex justify-between items-center px-5 py-3.5">
+              <span className="font-body text-sm text-arcade-dim">Avg Response Time</span>
+              <span className="font-arcade text-sm text-arcade-text">
+                {avgSec > 0 ? `${avgSec}s` : "—"}
+              </span>
+            </div>
 
-          <div className="flex justify-between items-center">
-            <span className="text-gray-500 text-sm">Difficulty</span>
-            <span className="font-bold text-gray-800 capitalize">
-              {result.difficulty}
-            </span>
+            <div className="flex justify-between items-center px-5 py-3.5">
+              <span className="font-body text-sm text-arcade-dim">Difficulty</span>
+              <span className="font-arcade text-xs text-arcade-text uppercase">
+                {result.difficulty}
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Sessions remaining */}
-        <div
-          className={`text-center text-sm mb-6 px-4 py-2 rounded-full ${
-            sessionsRemaining > 0
-              ? "bg-pink-50 text-pink-500"
-              : "bg-gray-100 text-gray-500"
-          }`}
-        >
-          {sessionsRemaining > 0 ? (
-            <>
-              {sessionsRemaining} of {MAX_SESSIONS} training sessions left this
-              week
-            </>
-          ) : (
-            <>
-              No sessions left this week. Come back Monday!
-            </>
-          )}
-        </div>
+        {/* Sessions remaining or locked */}
+        {sessionsRemaining > 0 ? (
+          <div className="flex justify-center gap-1.5 items-center mb-5">
+            {Array.from({ length: MAX_SESSIONS }, (_, i) => (
+              <span
+                key={i}
+                className={`text-xl ${
+                  i < sessionsRemaining
+                    ? "text-arcade-pink drop-shadow-[0_0_6px_rgba(255,45,120,0.8)]"
+                    : "text-arcade-border opacity-30"
+                }`}
+              >
+                ♥
+              </span>
+            ))}
+            <span className="font-body text-xs text-arcade-dim ml-1">
+              {sessionsRemaining} session{sessionsRemaining !== 1 ? "s" : ""} left
+            </span>
+          </div>
+        ) : (
+          <div className="text-center border border-arcade-border bg-arcade-card rounded-xl p-4 mb-5">
+            <span className="text-2xl">🔒</span>
+            <p className="font-body text-xs text-arcade-dim mt-2">
+              No sessions left — <span className="text-arcade-text font-semibold">come back Monday!</span>
+            </p>
+          </div>
+        )}
 
-        {/* Actions */}
+        {/* Action buttons */}
         <div className="flex flex-col gap-3">
           {sessionsRemaining > 0 && (
             <button
               onClick={onPlayAgain}
-              className="w-full bg-pink-500 hover:bg-pink-600 active:scale-95 text-white font-black text-lg py-4 rounded-2xl transition-all shadow-lg shadow-pink-100"
+              className="w-full font-arcade text-xs text-white bg-arcade-pink py-4 rounded-xl border-2 border-arcade-pink animate-glow-pulse active:scale-[0.97] transition-all hover:brightness-110 shadow-pink-glow"
             >
-              Play Again
+              PLAY AGAIN
             </button>
           )}
           <div className="flex gap-3">
             <button
               onClick={handleShare}
-              className="flex-1 border-2 border-gray-200 hover:border-pink-300 text-gray-600 hover:text-pink-500 font-semibold py-3 rounded-2xl transition-all"
+              className="flex-1 font-body text-sm font-semibold text-arcade-pink border-2 border-arcade-pink/40 hover:border-arcade-pink bg-arcade-card py-3 rounded-xl transition-all active:scale-[0.97]"
             >
               Share Score
             </button>
             <button
               onClick={onHome}
-              className="flex-1 border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-semibold py-3 rounded-2xl transition-all"
+              className="flex-1 font-body text-sm font-semibold text-arcade-dim border-2 border-arcade-border hover:border-arcade-dim bg-arcade-card py-3 rounded-xl transition-all active:scale-[0.97]"
             >
               Home
             </button>

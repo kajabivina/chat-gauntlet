@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.87.0",
+    "@ai-sdk/openai": "^3.0.52",
+    "@vercel/blob": "^2.3.3",
+    "ai": "^6.0.156",
     "next": "14.2.35",
     "react": "^18",
     "react-dom": "^18"

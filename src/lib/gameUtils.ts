@@ -34,6 +34,11 @@ const PROBLEMS: { value: Problem; label: string; opening: string }[] = [
     label: "Refund Request",
     opening: "i need a refund please, i changed my mind about my purchase",
   },
+  {
+    value: "kajabi",
+    label: "Kajabi Platform Issue",
+    opening: "hi i need help with my kajabi course, my students cant access the content at all",
+  },
 ];
 
 function shuffle<T>(arr: T[]): T[] {

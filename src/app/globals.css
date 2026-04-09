@@ -4,36 +4,66 @@
 
 @layer base {
   body {
-    @apply bg-white text-gray-900;
-    font-family: Arial, Helvetica, sans-serif;
+    background-color: #0D0D0D;
+    color: #E0E0E0;
+    font-family: var(--font-inter), sans-serif;
   }
 }
 
-@keyframes resolve-flash {
-  0% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.02); }
-  100% { opacity: 0; transform: scale(1.05); }
+/* Arcade pink grid background */
+.arcade-grid {
+  background-color: #0D0D0D;
+  background-image:
+    linear-gradient(rgba(255, 45, 120, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 45, 120, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
 }
 
-@keyframes bounce-in {
-  0% { transform: scale(0.8); opacity: 0; }
-  60% { transform: scale(1.05); }
-  100% { transform: scale(1); opacity: 1; }
+/* Neon pink text glow */
+.text-glow-pink {
+  text-shadow:
+    0 0 10px rgba(255, 45, 120, 1),
+    0 0 30px rgba(255, 45, 120, 0.7),
+    0 0 60px rgba(255, 45, 120, 0.4);
 }
 
-@keyframes slide-up {
-  from { transform: translateY(8px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+/* Chat message slide-in */
+.chat-message {
+  animation: slideIn 0.2s ease-out;
 }
 
-@keyframes pulse-pink {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4); }
-  50% { box-shadow: 0 0 0 8px rgba(236, 72, 153, 0); }
+/* Confetti fall — uses inline style vars */
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-20px) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(800deg) scale(0.6);
+    opacity: 0;
+  }
 }
 
-.animate-resolve { animation: resolve-flash 0.6s ease-out forwards; }
-.animate-bounce-in { animation: bounce-in 0.4s ease-out forwards; }
-.animate-slide-up { animation: slide-up 0.2s ease-out forwards; }
-.animate-pulse-pink { animation: pulse-pink 1.5s infinite; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-.chat-message { animation: slide-up 0.2s ease-out; }
+/* Score float override (needs exact timing) */
+.score-floater {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: floatUp 0.8s ease-out forwards;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-48px) scale(1.5); }
+}
