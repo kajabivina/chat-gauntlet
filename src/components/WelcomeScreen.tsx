@@ -37,6 +37,35 @@ export default function WelcomeScreen({ sessionsRemaining, onStart }: WelcomeScr
         </p>
       </div>
 
+      {/* How to play */}
+      <div className="w-full max-w-md mb-8 bg-arcade-card border border-arcade-border rounded-xl overflow-hidden">
+        <div className="px-4 py-2.5 border-b border-arcade-border bg-arcade-dark/50">
+          <p className="font-arcade text-[9px] text-arcade-dim tracking-widest text-center">HOW TO PLAY</p>
+        </div>
+        <div className="px-4 py-3 flex flex-col gap-2 font-body text-xs text-arcade-dim">
+          <p>💬 Respond to AI Kajabi customers in real-time chat windows.</p>
+          <p>✅ Resolve each issue before the timer runs out.</p>
+          <p>⚡ Fewer messages = higher score per resolved chat.</p>
+        </div>
+        <div className="border-t border-arcade-border px-4 py-3">
+          <p className="font-arcade text-[8px] text-arcade-dim mb-2 tracking-widest">SCORING</p>
+          <div className="grid grid-cols-3 gap-1.5 font-body text-[10px]">
+            <div className="bg-arcade-dark rounded px-2 py-1.5 text-center">
+              <span className="block text-arcade-pink font-semibold">+10</span>
+              <span className="text-arcade-dim">1–2 replies</span>
+            </div>
+            <div className="bg-arcade-dark rounded px-2 py-1.5 text-center">
+              <span className="block text-arcade-pink font-semibold">+8</span>
+              <span className="text-arcade-dim">3–4 replies</span>
+            </div>
+            <div className="bg-arcade-dark rounded px-2 py-1.5 text-center">
+              <span className="block text-arcade-pink font-semibold">+6</span>
+              <span className="text-arcade-dim">5–6 replies</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Session hearts */}
       <div className="flex items-center gap-3 mb-8">
         {Array.from({ length: MAX_SESSIONS }, (_, i) => (
