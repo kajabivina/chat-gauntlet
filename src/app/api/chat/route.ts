@@ -2,28 +2,20 @@ import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { NextRequest, NextResponse } from "next/server";
 import { readPolicy } from "@/lib/adminPolicy";
-
-const PROBLEMS: Record<string, string> = {
-  course_access: "is a Kajabi creator whose students cannot access their course or membership content",
-  billing: "has a question or complaint about a charge on their Kajabi account",
-  login: "cannot log in to their Kajabi account",
-  product_issue: "has a Kajabi product or course page that is not displaying or working correctly",
-  email_issue: "sent a Kajabi broadcast or automation email that was not delivered to their list",
-  cancellation: "wants to cancel their Kajabi subscription",
-};
+import { PROBLEM_CONTEXT } from "@/lib/gameUtils";
+import type { CustomerAccount } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000);
 
   try {
-    const { messages, persona, problem, impatience } = await req.json();
+    const { messages, persona, problem, impatience, account } = await req.json();
 
     const policy = await readPolicy();
     const personaData = policy.personas[persona as string];
-    const problemDesc = PROBLEMS[problem as string];
 
-    if (!personaData || !problemDesc) {
+    if (!personaData) {
       clearTimeout(timeout);
       return NextResponse.json({ error: "Invalid persona or problem" }, { status: 400 });
     }
@@ -35,9 +27,24 @@ export async function POST(req: NextRequest) {
         ? " You are starting to get impatient. Mention it subtly."
         : "";
 
-    const systemPrompt = `You are playing the role of a customer contacting support. ${personaData.style}${impatienceNote}
+    const accountInfo = account as CustomerAccount | undefined;
+    const contextFn = PROBLEM_CONTEXT[problem as string];
+    const problemContext = accountInfo && contextFn ? contextFn(accountInfo) : "";
 
-Your issue: You ${problemDesc}.
+    const accountSection = accountInfo
+      ? `\nYour account details (use these naturally when relevant — don't list them all at once):
+- Name: ${accountInfo.name}
+- Email: ${accountInfo.email}
+- Kajabi Plan: ${accountInfo.plan}
+- Product/Course: "${accountInfo.product}"
+- Member since: ${accountInfo.joinDate}
+- Account ID: ${accountInfo.accountId}`
+      : "";
+
+    const systemPrompt = `You are playing the role of a Kajabi customer contacting support. ${personaData.style}${impatienceNote}
+${accountSection}
+
+Your situation: ${problemContext}
 
 RULES:
 ${policy.rules}`;

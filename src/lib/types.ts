@@ -48,12 +48,22 @@ export interface ChatMessage {
   content: string;
 }
 
+export interface CustomerAccount {
+  name: string;
+  email: string;
+  plan: string;
+  product: string;
+  joinDate: string;
+  accountId: string;
+}
+
 export interface ChatWindow {
   id: string;
   persona: Persona;
   problem: Problem;
   personaLabel: string;
   problemLabel: string;
+  account: CustomerAccount;
   messages: ChatMessage[];
   resolved: boolean;
   resolvedAt?: number;

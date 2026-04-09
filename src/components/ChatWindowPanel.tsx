@@ -94,9 +94,11 @@ export default function ChatWindowPanel({
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-body text-xs font-bold text-arcade-text truncate">
-            {chat.personaLabel}
+            {chat.account.name}
           </p>
-          <p className="font-body text-[10px] text-arcade-dim truncate">{chat.problemLabel}</p>
+          <p className="font-body text-[10px] text-arcade-dim truncate">
+            {chat.problemLabel} · {chat.account.plan} · {chat.account.accountId}
+          </p>
         </div>
         {chat.resolved && (
           <span className="font-body text-[10px] font-bold text-green-400 bg-green-500/10 border border-green-500/30 px-2 py-0.5 rounded-full shrink-0">

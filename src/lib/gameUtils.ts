@@ -1,4 +1,34 @@
-import { Persona, Problem, ChatWindow, GameResult, Difficulty } from "./types";
+import { Persona, Problem, ChatWindow, CustomerAccount, GameResult, Difficulty } from "./types";
+
+const ACCOUNT_POOL: Omit<CustomerAccount, "accountId">[] = [
+  { name: "Sarah Mitchell", email: "sarah@mitchellcoaching.com", plan: "Growth", product: "Mindful Leadership Masterclass", joinDate: "March 2023" },
+  { name: "James Okafor", email: "james@okafordigital.com", plan: "Pro", product: "Financial Freedom Blueprint", joinDate: "August 2022" },
+  { name: "Linda Reyes", email: "linda.reyes@wellnesswithlinda.com", plan: "Basic", product: "30-Day Gut Health Reset", joinDate: "January 2024" },
+  { name: "Tom Hargreaves", email: "tom@hargreavesconsulting.com", plan: "Growth", product: "B2B Sales Accelerator", joinDate: "June 2023" },
+  { name: "Priya Nair", email: "priya@priyateaches.com", plan: "Kickstarter", product: "Beginner Watercolour Workshop", joinDate: "November 2023" },
+  { name: "David Chu", email: "david@chuproductions.com", plan: "Pro", product: "YouTube Mastery for Creators", joinDate: "April 2022" },
+  { name: "Margaret Olsen", email: "margaret@olsenacademy.net", plan: "Basic", product: "Backyard Beekeeping 101", joinDate: "September 2023" },
+  { name: "Carlos Vega", email: "carlos@vegafitpro.com", plan: "Growth", product: "Elite Strength Program", joinDate: "February 2023" },
+];
+
+const PROBLEM_CONTEXT: Record<string, (account: CustomerAccount) => string> = {
+  course_access: (a) =>
+    `Your product is called "${a.product}". You have 63 students enrolled. They are getting a "Content not available" error when trying to access lessons. You already tried logging out and back in on your end and asking a student to do the same — nothing worked. This started about 2 hours ago with no changes made on your side.`,
+  billing: (a) =>
+    `You are on the ${a.plan} plan. You were charged $199 this month but expected to be on a discounted rate of $149 from a promotion you signed up for. The charge came through today. You have your bank statement ready if needed. Your billing email is ${a.email}.`,
+  login: (a) =>
+    `Your account email is ${a.email}. You have tried resetting your password twice — the reset email is not arriving even in spam. You last logged in about 3 days ago with no issues. You have tried Chrome and Safari. Your account has been active since ${a.joinDate}.`,
+  product_issue: (a) =>
+    `Your product is called "${a.product}". Two of your lesson pages are showing completely blank — the video and text content have disappeared. This happened sometime in the last 24 hours. You have not made any edits recently. Other pages look fine.`,
+  email_issue: (a) =>
+    `You sent a broadcast email to your full list of 2,847 subscribers about 90 minutes ago promoting "${a.product}". The broadcast shows "Sent" in Kajabi but you have zero opens and several students have messaged saying they got nothing. You have checked your own inbox — not there either.`,
+  cancellation: (a) =>
+    `You have been a Kajabi member since ${a.joinDate} on the ${a.plan} plan. You want to cancel because you are pausing your business for personal reasons — it is not a product complaint. You want to know if there is a pause option, and if not, how to cancel and whether you will get a prorated refund.`,
+};
+
+function generateAccountId(): string {
+  return "KAJ-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+}
 
 const PERSONAS: { value: Persona; label: string }[] = [
   { value: "frustrated_tech", label: "Frustrated Tech User" },
@@ -53,16 +83,20 @@ function shuffle<T>(arr: T[]): T[] {
 export function generateChats(count: number): ChatWindow[] {
   const shuffledPersonas = shuffle(PERSONAS);
   const shuffledProblems = shuffle(PROBLEMS);
+  const shuffledAccounts = shuffle(ACCOUNT_POOL);
 
   return Array.from({ length: count }, (_, i) => {
     const persona = shuffledPersonas[i % shuffledPersonas.length];
     const problem = shuffledProblems[i % shuffledProblems.length];
+    const baseAccount = shuffledAccounts[i % shuffledAccounts.length];
+    const account: CustomerAccount = { ...baseAccount, accountId: generateAccountId() };
     return {
       id: `chat-${i}-${Date.now()}`,
       persona: persona.value,
       problem: problem.value,
       personaLabel: persona.label,
       problemLabel: problem.label,
+      account,
       messages: [{ role: "assistant" as const, content: problem.opening }],
       resolved: false,
       startedAt: Date.now(),
@@ -72,6 +106,8 @@ export function generateChats(count: number): ChatWindow[] {
     };
   });
 }
+
+export { PROBLEM_CONTEXT };
 
 export function calculatePoints(agentMessageCount: number): number {
   if (agentMessageCount <= 2) return 10;

@@ -138,7 +138,7 @@ export default function GameScreen({ difficulty, onGameEnd }: GameScreenProps) {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: apiMessages, persona: chat.persona, problem: chat.problem, impatience: chat.impatience }),
+        body: JSON.stringify({ messages: apiMessages, persona: chat.persona, problem: chat.problem, impatience: chat.impatience, account: chat.account }),
       });
 
       const data = await res.json();
